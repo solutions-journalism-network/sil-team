@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Contractors · Solutions Insights Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500;1,700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Look and feel follows solutionsinsightslab.org: black + teal, soft aqua hero, light grey surfaces,
+   bold sans headlines with an italic serif accent word, small-radius buttons. */
+:root{
+  --bg:#ffffff; --soft:#f2f2f2; --soft2:#e8e8e8; --ink:#000000; --ink2:#4d4d4d; --line:#d6d6d6;
+  --teal:#8AC6CC; --teal-hover:#74b6bd;
+  --hero:linear-gradient(180deg,#f3fafb 0%,#b7dde1 100%);
+  --warn-bg:#fff1cc; --warn-ink:#6b4a00; --bad-bg:#fde7e4; --bad-ink:#8a2a1f;
+  /* status colours: bar + row tint + label text */
+  --on-bar:#8AC6CC;  --on-bg:#e7f4f5;  --on-ink:#1b5359;
+  --get-bar:#e3a72f; --get-bg:#fff5dc; --get-ink:#6b4a00;
+  --pro-bar:#6f7fa3; --pro-bg:#f1f3f9; --pro-ink:#34436a;
+  --past-bar:#b3b3b3;--past-bg:#f2f2f2;--past-ink:#555555;
+  --r:6px;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 Roboto,system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em}
+em.accent{font-family:Lora,Georgia,serif;font-style:italic;font-weight:700;letter-spacing:0}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:2px}
+[hidden]{display:none !important}
+
+/* buttons: black = main actions, teal = card-level actions, white = neutral */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid var(--ink);background:#fff;color:var(--ink);padding:.5rem 1.05rem;border-radius:4px;cursor:pointer;font-weight:700;font-size:.95rem}
+.btn:hover{background:var(--soft)}
+.btn.primary{background:var(--ink);color:#fff}
+.btn.primary:hover{background:#262626}
+.btn.teal{background:var(--teal);border-color:var(--teal);color:var(--ink)}
+.btn.teal:hover{background:var(--teal-hover);border-color:var(--teal-hover)}
+.btn.danger{border-color:var(--line);color:var(--bad-ink)}
+.btn.sm{padding:.3rem .75rem;font-size:.85rem}
+.btn:disabled{opacity:.55;cursor:default}
+.btn:focus-visible,.chip:focus-visible,.head:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+
+/* lock screen */
+.lock{min-height:100dvh;display:grid;place-items:center;padding:1.25rem;background:var(--hero)}
+.lockbox{width:min(420px,100%);display:grid;gap:1rem;background:#fff;border-radius:8px;padding:1.9rem;box-shadow:0 8px 30px rgba(0,0,0,.08)}
+.eyebrow{font-size:.78rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink2)}
+.lockbox h1{font-size:2.2rem;line-height:1.1}
+.field{display:grid;gap:.3rem;font-weight:500;font-size:.92rem}
+.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:var(--r);padding:.6rem .75rem;background:#fff;font-weight:400;font-size:1rem;width:100%}
+.field input[readonly]{background:var(--soft)}
+.field textarea{resize:vertical;min-height:5rem}
+.err{margin:0;color:var(--bad-ink);background:var(--bad-bg);padding:.5rem .75rem;border-radius:var(--r);font-size:.92rem}
+.help{font-size:.82rem;color:var(--ink2);font-weight:400}
+
+/* hero band */
+.hero{background:var(--hero)}
+.inner{max-width:1040px;margin:0 auto;padding:1.6rem 1.1rem 1.7rem}
+.top{display:flex;gap:1rem;justify-content:space-between;align-items:flex-end;flex-wrap:wrap}
+.top h1{font-size:clamp(2.1rem,6vw,3.1rem);line-height:1.08}
+.top > div:first-child{flex:1 1 380px;min-width:0}
+.sub{margin:.35rem 0 0;color:var(--ink2)}
+.actions{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* content */
+.wrap{max-width:1040px;margin:0 auto;padding:1.4rem 1.1rem 3rem}
+.search input{width:100%;border:1px solid var(--line);border-radius:var(--r);padding:.8rem 1rem;font-size:1.05rem;background:#fff}
+.chips{display:flex;gap:.45rem;flex-wrap:wrap;margin-top:.9rem}
+.chip{display:inline-flex;align-items:center;border:1px solid var(--line);background:#fff;padding:.35rem .85rem;border-radius:4px;cursor:pointer;font-weight:500;font-size:.92rem}
+.chip:hover{border-color:var(--ink)}
+.chip .n{color:var(--ink2);font-weight:400;margin-left:.3rem}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.chip[aria-pressed="true"] .n{color:#cfcfcf}
+.sw{display:inline-block;width:.75rem;height:.75rem;border-radius:3px;margin-right:.45rem;background:var(--ink2)}
+.sw.on{background:var(--on-bar)} .sw.getting{background:var(--get-bar)} .sw.prospect{background:var(--pro-bar)} .sw.past{background:var(--past-bar)}
+.selects{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.6rem;margin-top:.8rem}
+.selects select{border:1px solid var(--line);border-radius:var(--r);padding:.55rem .65rem;background:#fff;width:100%}
+.count{margin:1.1rem 0 .5rem;color:var(--ink2);font-size:.92rem}
+
+/* list: Name | Role | Location | Language, status shown by colour */
+.cols,.head{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1.5fr) minmax(0,1.6fr) minmax(0,1.1fr);gap:.3rem 1.1rem}
+.cols{padding:0 1.1rem 0 calc(6px + 1.1rem);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin-bottom:.35rem}
+.list{display:grid;gap:.55rem}
+.item{border-radius:var(--r);border-left:6px solid var(--past-bar);background:var(--past-bg);overflow:hidden}
+.item.s-on{border-left-color:var(--on-bar);background:var(--on-bg)}
+.item.s-getting{border-left-color:var(--get-bar);background:var(--get-bg)}
+.item.s-prospect{border-left-color:var(--pro-bar);background:var(--pro-bg)}
+.item.s-past{border-left-color:var(--past-bar);background:var(--past-bg)}
+.item.open{box-shadow:0 0 0 2px var(--ink)}
+.head{width:100%;text-align:left;background:none;border:0;padding:.85rem 1.1rem;cursor:pointer;align-items:start}
+.head:hover{background:rgba(0,0,0,.04)}
+.c{min-width:0;overflow-wrap:anywhere}
+.nm{display:block;font-size:1.12rem;font-weight:700;line-height:1.25}
+.statline{display:flex;gap:.45rem;align-items:center;flex-wrap:wrap;margin-top:.2rem}
+.stat{font-size:.72rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.s-on .stat{color:var(--on-ink)} .s-getting .stat{color:var(--get-ink)} .s-prospect .stat{color:var(--pro-ink)} .s-past .stat,.s-other .stat{color:var(--past-ink)}
+.c-role{font-weight:700;font-size:1.02rem}
+.c-where,.c-lang{font-size:1rem}
+.dim{color:var(--ink2)}
+.s-past .c-where,.s-past .c-lang{color:var(--ink2)}
+.badge{display:inline-block;border-radius:4px;padding:.02rem .5rem;font-size:.76rem;font-weight:700}
+.badge.warn{background:var(--warn-bg);color:var(--warn-ink);box-shadow:inset 0 0 0 1px #e8c466}
+.badge.act{background:var(--teal);color:var(--ink)}
+.badge.up{background:var(--warn-bg);color:var(--warn-ink)}
+.badge.end{background:var(--soft2);color:var(--ink2)}
+.tags{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.45rem}
+.tag{background:#fff;border-radius:4px;padding:.05rem .55rem;font-size:.82rem}
+
+.detail{padding:.4rem 1.1rem 1.15rem;background:#fff;border-top:1px solid var(--line)}
+.dl{display:grid;grid-template-columns:140px 1fr;gap:.5rem 1rem;margin:.8rem 0 0}
+.dl dt{font-weight:700;font-size:.85rem;color:var(--ink2)}
+.dl dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.chead{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin:1.2rem 0 .5rem}
+.chead h4{font-size:1rem}
+.contract{border:1px solid var(--line);border-left:5px solid var(--past-bar);border-radius:var(--r);padding:.7rem .9rem;margin-top:.5rem;background:#fff}
+.contract.active{border-left-color:var(--on-bar);background:var(--on-bg)}
+.contract.upcoming{border-left-color:var(--get-bar);background:var(--get-bg)}
+.cr1{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.cr1 strong{font-size:.98rem}
+.contract .dl{grid-template-columns:100px 1fr;margin-top:.5rem}
+.cacts{display:flex;gap:.4rem;margin-top:.6rem}
+.dacts{display:flex;gap:.5rem;margin-top:1.1rem;flex-wrap:wrap}
+.empty{text-align:center;padding:2.5rem 1rem;background:var(--soft);border-radius:var(--r);color:var(--ink2)}
+.empty h2{color:var(--ink);font-size:1.2rem;margin-bottom:.3rem}
+.none{color:var(--ink2);font-size:.92rem;margin:.2rem 0 0}
+
+/* dialogs */
+dialog{border:0;border-radius:8px;padding:0;width:min(680px,calc(100vw - 1.5rem));max-height:92dvh;background:#fff;color:var(--ink);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+.form{padding:1.3rem 1.4rem;display:grid;gap:.85rem}
+.form h2{font-size:1.5rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.quick{display:flex;gap:.3rem;flex-wrap:wrap}
+.quick button{border:1px solid var(--line);background:var(--soft);border-radius:4px;padding:.05rem .5rem;font-size:.8rem;cursor:pointer}
+.quick button.on{background:var(--teal);border-color:var(--teal);color:var(--ink)}
+.formacts{display:flex;gap:.5rem;justify-content:flex-end;position:sticky;bottom:0;background:#fff;padding-top:.5rem}
+.note{margin:0;padding:.55rem .75rem;border-radius:var(--r);background:var(--soft);font-size:.9rem}
+
+.foot{border-top:1px solid var(--line);padding:1.1rem;text-align:center;font-size:.85rem;color:var(--ink2)}
+.toast{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);background:var(--ink);color:#fff;padding:.6rem 1rem;border-radius:4px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:90vw}
+.toast.show{opacity:1}
+
+@media (max-width:720px){
+  .cols{display:none}
+  .head{grid-template-columns:1fr}
+  .c-where::before{content:"Location: ";color:var(--ink2);font-size:.82rem}
+  .c-lang::before{content:"Language: ";color:var(--ink2);font-size:.82rem}
+  .grid2{grid-template-columns:1fr}
+  .dl,.contract .dl{grid-template-columns:1fr;gap:.1rem}
+  .dl dd{margin-bottom:.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="lock" id="lock">
+  <form class="lockbox" id="lockForm">
+    <div>
+      <div class="eyebrow">Solutions Insights Lab</div>
+      <h1>Our <em class="accent">contractors</em></h1>
+    </div>
+    <label class="field">Team password
+      <input id="pw" type="password" autocomplete="current-password" required>
+    </label>
+    <p class="err" id="lockErr" hidden></p>
+    <button class="btn primary" id="lockBtn" type="submit">Unlock</button>
+  </form>
+</div>
+
+<div id="app" hidden>
+  <header class="hero">
+    <div class="inner top">
+      <div>
+        <div class="eyebrow">Solutions Insights Lab</div>
+        <h1>Our <em class="accent">contractors</em></h1>
+        <p class="sub" id="summary"></p>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="addBtn" hidden>+ Add contractor</button>
+        <button class="btn primary" id="addContractBtn" hidden>+ Add contract</button>
+        <button class="btn" id="logoutBtn">Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="search">
+      <input id="q" type="search" placeholder="Search by name, role, place, language, project… (try “videographer Ethiopia”)" aria-label="Search contractors" autocomplete="off">
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by status"></div>
+    <div class="selects">
+      <select id="fRole" aria-label="Filter by role"></select>
+      <select id="fCountry" aria-label="Filter by country"></select>
+      <select id="fLanguage" aria-label="Filter by language"></select>
+      <select id="fProject" aria-label="Filter by project"></select>
+    </div>
+
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="cols" aria-hidden="true"><span>Name</span><span>Role</span><span>Location</span><span>Language</span></div>
+    <div class="list" id="list"></div>
+  </main>
+  <footer class="foot">Internal use only · Solutions Insights Lab</footer>
+</div>
+
+<!-- add / edit a person -->
+<dialog id="dlg">
+  <form class="form" id="form" autocomplete="off">
+    <h2 id="formTitle">Add contractor</h2>
+    <label class="field">Name *<input id="f_name" required></label>
+    <p class="note" id="statusNote" hidden></p>
+    <label class="field">Role(s)
+      <input id="f_roles" placeholder="e.g. Interviewer, Translator">
+      <span class="quick" id="rolesQuick"></span>
+    </label>
+    <div class="grid2">
+      <label class="field">City/State<input id="f_location" placeholder="e.g. Austin, TX"></label>
+      <label class="field">Country<input id="f_country" list="countryList" placeholder="Pick or type"><datalist id="countryList"></datalist></label>
+    </div>
+    <label class="field">Language(s)
+      <input id="f_languages" placeholder="e.g. Spanish, English">
+      <span class="quick" id="langQuick"></span>
+    </label>
+    <label class="field">Bio<textarea id="f_bio"></textarea></label>
+    <label class="field">CV link<input id="f_cvLink" type="url" placeholder="https://…"></label>
+    <label class="field">Notes<textarea id="f_notes"></textarea></label>
+    <p class="help" style="margin:0">Email and phone are kept in the Google Sheet only and aren’t shown here. Contracts are added from the person’s card or with “+ Add contract”.</p>
+    <p class="err" id="formErr" hidden></p>
+    <div class="formacts">
+      <button class="btn" type="button" id="cancelBtn">Cancel</button>
+      <button class="btn primary" type="submit" id="saveBtn">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- add / edit a contract -->
+<dialog id="cdlg">
+  <form class="form" id="cform" autocomplete="off">
+    <h2 id="cTitle">Add contract</h2>
+    <label class="field">Person *
+      <input id="c_person" list="peopleList" placeholder="Start typing a name" required>
+      <datalist id="peopleList"></datalist>
+    </label>
+    <label class="field">Projects<input id="c_projects" placeholder="Separate with commas, e.g. Enlight, Skoll"></label>
+    <div class="grid2">
+      <label class="field">Start date<input id="c_start" type="date"></label>
+      <label class="field">End date<input id="c_end" type="date"></label>
+    </div>
+    <label class="field">Payment terms
+      <textarea id="c_payTerms" placeholder="The rate(s), caps and dates for this contract"></textarea>
+    </label>
+    <label class="field">Notes<textarea id="c_notes"></textarea></label>
+    <p class="err" id="cErr" hidden></p>
+    <div class="formacts">
+      <button class="btn" type="button" id="cCancelBtn">Cancel</button>
+      <button class="btn primary" type="submit" id="cSaveBtn">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+  // ---- The one line to edit: paste your Apps Script web app URL (it ends in /exec) ----
+  const API_URL = "https://script.google.com/macros/s/AKfycbz_nDReG_PVrkHZbtfSK9sE1GqE76AoQbHjYPSJw-QVgum-u8UFaRCmm3Wp3-x2IlU52A/exec";
+
+  const $ = (s) => document.querySelector(s);
+  const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
+  const linkify = (s) => esc(s).replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+  const ENDING_SOON_DAYS = 60;                       // how early the "Ends in N days" flag appears
+  const STATUS_ORDER = ["On contract", "Getting on contract", "Prospect", "Past"];
+  const STATUS_KEY = { "On contract":"on", "Getting on contract":"getting", "Prospect":"prospect", "Past":"past" };
+
+  const state = {
+    password: "", canWrite: false, loaded: false, lastLoad: 0, unlinkedNames: [],
+    people: [], contracts: [], by: {},
+    filters: { status: "All", role: "", country: "", language: "", project: "" },
+    open: null, editingPerson: null, editingContract: null, editingPersonV: "", editingContractV: ""
+  };
+
+  // ---------- small helpers ----------
+  const isoRe = /^(\d{4})-(\d{2})-(\d{2})$/;
+  const pad = (n) => String(n).padStart(2, "0");
+  function todayISO(){ const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; }
+  function dateLabel(iso){
+    const m = isoRe.exec(iso || ""); if (!m) return iso || "";
+    return new Date(+m[1], +m[2] - 1, +m[3]).toLocaleDateString("en-US", { month:"short", day:"numeric", year:"numeric" });
+  }
+  function daysUntil(iso){
+    const m = isoRe.exec(iso || ""); if (!m) return null;
+    const end = new Date(+m[1], +m[2] - 1, +m[3]);
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    return Math.round((end - t) / 86400000);
+  }
+  const splitList = (s) => [...new Set(String(s || "").split(/[;,|]/).map(x => x.trim()).filter(Boolean))];
+  const uniq = (arr) => [...new Set(arr.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  // dropdown/filter choices come from what is already in the Sheet
+  function lists(){
+    return { roles: uniq(state.people.flatMap(p => p.roles)), countries: uniq(state.people.map(p => p.country)),
+             languages: uniq(state.people.flatMap(p => p.languages)) };
+  }
+  let toastTimer;
+  function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove("show"), 2800); }
+  function showErr(sel, msg){ const e = $(sel); e.textContent = msg; e.hidden = !msg; }
+
+  // ---------- talking to the Google Apps Script backend ----------
+  const LOCK_MSG = {
+    bad_password: "That password isn’t right.",
+    locked: "Too many wrong attempts. Try again in about 10 minutes.",
+    not_configured: "This site isn’t set up yet. Ask the person who manages it.",
+    network: "Couldn’t reach the contractor list. Check your connection and try again.",
+    busy: "The list is busy right now. Try again in a moment."
+  };
+  const store = {
+    get(){ try { return sessionStorage.getItem("contractors-pw") || ""; } catch { return ""; } },
+    set(v){ try { v ? sessionStorage.setItem("contractors-pw", v) : sessionStorage.removeItem("contractors-pw"); } catch {} }
+  };
+  const apiError = (code) => Object.assign(new Error(code), { code });
+
+  async function call(action, extra){
+    if (API_URL.startsWith("PASTE")) throw apiError("not_configured");
+    let data;
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" }, // keeps this a "simple" request, so no CORS preflight
+        body: JSON.stringify({ action, password: state.password, ...extra })
+      });
+      data = await res.json();
+    } catch { throw apiError("network"); }
+    if (data && data.people){   // fresh data also comes back with a "conflict", so the screen stays up to date
+      state.canWrite = !!data.canWrite; state.people = data.people; state.contracts = data.contracts || [];
+      state.unlinkedNames = data.unlinkedNames || []; state.loaded = true; state.lastLoad = Date.now();
+    }
+    if (!data || !data.ok) throw apiError((data && data.error) || "server_error");
+    return data;
+  }
+
+  function showApp(){ $("#lock").hidden = true; $("#app").hidden = false; render(); }
+
+  function showLock(msg){
+    state.password = ""; state.people = []; state.contracts = []; state.by = {}; state.canWrite = false; state.loaded = false; state.open = null;
+    state.filters = { status: "All", role: "", country: "", language: "", project: "" };
+    store.set("");
+    $("#dlg").close(); $("#cdlg").close();
+    $("#q").value = ""; $("#list").innerHTML = ""; $("#chips").innerHTML = "";
+    $("#app").hidden = true; $("#lock").hidden = false;
+    const err = $("#lockErr"); err.textContent = msg || ""; err.hidden = !msg;
+    $("#pw").value = ""; $("#pw").focus();
+  }
+
+  async function tryUnlock(pw, silent){
+    state.password = pw;
+    try { await call("list"); store.set(pw); showApp(); }
+    catch (err){ showLock(silent && err.code === "bad_password" ? "" : (LOCK_MSG[err.code] || "Something went wrong. Try again.")); }
+  }
+
+  function writeError(err, verb){
+    if (err.code === "conflict"){
+      $("#dlg").close(); $("#cdlg").close(); render();
+      toast("Someone else changed this just now. The latest version is shown: please check it and try again.");
+      return "";
+    }
+    if (err.code === "busy") return LOCK_MSG.busy;
+    if (err.code === "read_only"){ state.canWrite = false; render(); return "You don’t have permission to change this list."; }
+    if (err.code === "bad_password" || err.code === "locked"){ showLock(err.code === "locked" ? LOCK_MSG.locked : "The password was changed. Enter the new one."); return ""; }
+    if (err.code === "server_error") return `Couldn’t ${verb}. Check the entries and try again.`;
+    return `Couldn’t ${verb}. Check your connection and try again.`;
+  }
+
+  async function refresh(){
+    if (!state.password || document.hidden || $("#app").hidden || $("#dlg").open || $("#cdlg").open) return;
+    if (Date.now() - state.lastLoad < 30000) return;     // just loaded: nothing new to fetch
+    try { await call("list"); render(); }
+    catch (err){ if (err.code === "bad_password") showLock("The password was changed. Enter the new one."); }
+  }
+
+  // ---------- work out each person's status from their contracts ----------
+  const isActive = (c, today) => (!c.start || c.start <= today) && (!c.end || c.end >= today);
+
+  function derive(){
+    const today = todayISO(), by = {};
+    state.people.forEach(p => { by[p.id] = { contracts: [], active: [], projects: [], status: "", endsIn: null }; });
+    state.contracts.forEach(c => { if (by[c.personId]) by[c.personId].contracts.push(c); });
+    state.people.forEach(p => {
+      const d = by[p.id];
+      d.contracts.sort((a, b) => (b.start || b.end || "").localeCompare(a.start || a.end || "") || (b.end || "").localeCompare(a.end || ""));
+      d.active = d.contracts.filter(c => isActive(c, today));
+      const upcoming = d.contracts.some(c => c.start && c.start > today);
+      d.projects = [...new Set(d.contracts.flatMap(c => c.projects))];
+      d.status = d.active.length ? "On contract" : upcoming ? "Getting on contract" : d.contracts.length ? "Past" : "Prospect";
+      if (d.status === "On contract" && d.active.every(c => c.end)) d.endsIn = daysUntil(d.active.map(c => c.end).sort().pop());
+    });
+    state.by = by;
+  }
+
+  const statusKey = (s) => STATUS_KEY[s] || "other";
+  const rowClass = (s) => ({ on:"s-on", getting:"s-getting", prospect:"s-prospect", past:"s-past" }[statusKey(s)] || "s-other");
+  const endingFlag = (d) => d.endsIn === null || d.endsIn > ENDING_SOON_DAYS || d.endsIn < 0 ? ""
+    : `<span class="badge warn">${d.endsIn === 0 ? "Ends today" : `Ends in ${d.endsIn} day${d.endsIn === 1 ? "" : "s"}`}</span>`;
+
+  // ---------- filtering + rendering ----------
+  function haystack(p){
+    const d = state.by[p.id];
+    return [p.name, p.roles.join(" "), p.location, p.country, p.languages.join(" "), p.bio, p.notes, d.status, d.projects.join(" "),
+      d.contracts.map(c => [c.payTerms, c.notes].join(" ")).join(" ")].join(" ").toLowerCase();
+  }
+
+  function filtered(){
+    const f = state.filters;
+    const words = $("#q").value.toLowerCase().split(/\s+/).filter(Boolean);
+    const rank = (s) => { const i = STATUS_ORDER.indexOf(s); return i < 0 ? 99 : i; };
+    return state.people.filter(p => {
+      const d = state.by[p.id];
+      return (f.status === "All" || d.status === f.status) &&
+        (!f.role || p.roles.includes(f.role)) &&
+        (!f.country || p.country === f.country) &&
+        (!f.language || p.languages.includes(f.language)) &&
+        (!f.project || d.projects.includes(f.project)) &&
+        words.every(w => haystack(p).includes(w));
+    }).sort((a, b) => rank(state.by[a.id].status) - rank(state.by[b.id].status) || a.name.localeCompare(b.name));
+  }
+
+  function renderControls(){
+    const f = state.filters, counts = {};
+    state.people.forEach(p => { const s = state.by[p.id].status; counts[s] = (counts[s] || 0) + 1; });
+    const extra = Object.keys(counts).filter(s => !STATUS_ORDER.includes(s));
+    const statuses = ["All", ...STATUS_ORDER, ...extra];
+    $("#chips").innerHTML = statuses.map(s =>
+      `<button class="chip" type="button" data-status="${esc(s)}" aria-pressed="${f.status === s}">${s === "All" ? "" : `<span class="sw ${statusKey(s)}"></span>`}${esc(s)}<span class="n">${s === "All" ? state.people.length : (counts[s] || 0)}</span></button>`).join("");
+    const opts = (label, vals, cur) => `<option value="">${label}</option>` + vals.map(v => `<option value="${esc(v)}"${v === cur ? " selected" : ""}>${esc(v)}</option>`).join("");
+    const L = lists();
+    $("#fRole").innerHTML = opts("All roles", L.roles, f.role);
+    $("#fCountry").innerHTML = opts("All countries", L.countries, f.country);
+    $("#fLanguage").innerHTML = opts("All languages", L.languages, f.language);
+    $("#fProject").innerHTML = opts("All projects", uniq(state.people.flatMap(p => state.by[p.id].projects)), f.project);
+    const bits = state.people.length ? [`${counts["On contract"] || 0} on contract`, `${state.people.length} people`] : [];
+    if (state.canWrite && state.unlinkedNames.length) bits.push(`In the Sheet, ${state.unlinkedNames.length === 1 ? "a contract doesn’t" : "contracts don’t"} match anyone in People: ${state.unlinkedNames.join(", ")}`);
+    $("#summary").textContent = bits.join(" · ");
+    $("#addBtn").hidden = !state.canWrite;
+    $("#addContractBtn").hidden = !state.canWrite || !state.people.length;
+  }
+
+  function contractHtml(c, today){
+    const label = c.start && c.end ? `${dateLabel(c.start)} → ${dateLabel(c.end)}`
+      : c.end ? `Ends ${dateLabel(c.end)}` : c.start ? `Starts ${dateLabel(c.start)}` : "No dates";
+    const active = isActive(c, today), upcoming = !active && c.start && c.start > today;
+    const badge = active ? `<span class="badge act">Active</span>` : upcoming ? `<span class="badge up">Upcoming</span>` : `<span class="badge end">Ended</span>`;
+    const dEnd = active && c.end ? daysUntil(c.end) : null;
+    const flag = dEnd !== null && dEnd >= 0 && dEnd <= ENDING_SOON_DAYS ? `<span class="badge warn">${dEnd === 0 ? "Ends today" : `Ends in ${dEnd} day${dEnd === 1 ? "" : "s"}`}</span>` : "";
+    const row = (k, v) => v ? `<dt>${k}</dt><dd>${v}</dd>` : "";
+    return `<div class="contract ${active ? "active" : upcoming ? "upcoming" : ""}">
+      <div class="cr1"><strong>${esc(label)}</strong>${badge}${flag}</div>
+      ${c.projects.length ? `<div class="tags">${c.projects.map(x => `<span class="tag">${esc(x)}</span>`).join("")}</div>` : ""}
+      <dl class="dl">${row("Payment terms", linkify(c.payTerms))}${row("Notes", linkify(c.notes))}</dl>
+      ${state.canWrite ? `<div class="cacts"><button class="btn teal sm" data-act="edit-contract" data-id="${esc(c.id)}">Edit</button><button class="btn danger sm" data-act="del-contract" data-id="${esc(c.id)}">Delete</button></div>` : ""}
+    </div>`;
+  }
+
+  function detailHtml(p){
+    const d = state.by[p.id], today = todayISO();
+    const row = (k, v) => v ? `<dt>${k}</dt><dd>${v}</dd>` : "";
+    const cv = /^https?:\/\//i.test(p.cvLink) ? `<a href="${esc(p.cvLink)}" target="_blank" rel="noopener noreferrer">Open CV</a>` : esc(p.cvLink);
+    return `<div class="detail">
+      <dl class="dl">
+        ${row("Bio", esc(p.bio))}
+        ${row("CV", cv)}
+        ${row("Notes", linkify(p.notes))}
+      </dl>
+      <div class="chead"><h4>Contracts (${d.contracts.length})</h4>${state.canWrite ? `<button class="btn teal sm" data-act="add-contract" data-id="${esc(p.id)}">+ Add contract</button>` : ""}</div>
+      ${d.contracts.length ? d.contracts.map(c => contractHtml(c, today)).join("") : `<p class="none">No contracts yet.</p>`}
+      ${state.canWrite ? `<div class="dacts"><button class="btn teal" data-act="edit-person" data-id="${esc(p.id)}">Edit contractor</button><button class="btn danger" data-act="del-person" data-id="${esc(p.id)}">Delete contractor</button></div>` : ""}
+    </div>`;
+  }
+
+  function renderList(){
+    const items = filtered();
+    $("#count").textContent = `${items.length} of ${state.people.length} contractors`;
+    if (!items.length){
+      $("#list").innerHTML = `<div class="empty"><h2>${state.people.length ? "No one matches that" : "No contractors yet"}</h2><p>${state.people.length ? "Try fewer words or clear the filters." : (state.canWrite ? "Add the first one with the button above." : "")}</p></div>`;
+      return;
+    }
+    $("#list").innerHTML = items.map(p => {
+      const d = state.by[p.id], open = state.open === p.id;
+      const where = [p.location, p.country].filter(Boolean).join(", ");
+      return `<article class="item ${rowClass(d.status)}${open ? " open" : ""}">
+        <button class="head" type="button" data-toggle="${esc(p.id)}" aria-expanded="${open}">
+          <span class="c c-name"><span class="nm">${esc(p.name)}</span><span class="statline"><span class="stat">${esc(d.status)}</span>${endingFlag(d)}</span></span>
+          <span class="c c-role">${esc(p.roles.join(", ")) || '<span class="dim">—</span>'}</span>
+          <span class="c c-where">${esc(where) || '<span class="dim">—</span>'}</span>
+          <span class="c c-lang">${esc(p.languages.join(", ")) || '<span class="dim">—</span>'}</span>
+        </button>${open ? detailHtml(p) : ""}</article>`;
+    }).join("");
+  }
+
+  function render(){ if (!state.loaded) return; derive(); renderControls(); renderList(); }
+
+  // ---------- add / edit a person ----------
+  const P_TEXT = ["name", "location", "country", "bio", "cvLink", "notes"];
+  const P_LIST = ["roles", "languages"];
+
+  function syncChips(input, box, values){
+    const have = splitList($(input).value).map(x => x.toLowerCase());
+    $(box).innerHTML = values.map(v => `<button type="button" data-v="${esc(v)}" class="${have.includes(v.toLowerCase()) ? "on" : ""}">${esc(v)}</button>`).join("");
+  }
+  function wireChips(input, box, valuesFn){
+    $(box).addEventListener("click", e => {
+      const b = e.target.closest("[data-v]"); if (!b) return;
+      const cur = splitList($(input).value), v = b.dataset.v, i = cur.findIndex(x => x.toLowerCase() === v.toLowerCase());
+      if (i >= 0) cur.splice(i, 1); else cur.push(v);
+      $(input).value = cur.join(", "); syncChips(input, box, valuesFn());
+    });
+    $(input).addEventListener("input", () => syncChips(input, box, valuesFn()));
+  }
+
+  function openPerson(id){
+    const p = id ? state.people.find(x => x.id === id) : null;
+    state.editingPerson = p ? p.id : null; state.editingPersonV = p ? p.v : "";
+    $("#formTitle").textContent = p ? "Edit contractor" : "Add contractor";
+    showErr("#formErr", "");
+    $("#countryList").innerHTML = lists().countries.map(c => `<option value="${esc(c)}"></option>`).join("");
+    P_TEXT.forEach(k => { $("#f_" + k).value = p ? p[k] : ""; });
+    P_LIST.forEach(k => { $("#f_" + k).value = p ? p[k].join(", ") : ""; });
+    syncChips("#f_roles", "#rolesQuick", lists().roles);
+    syncChips("#f_languages", "#langQuick", lists().languages);
+    const note = $("#statusNote");
+    if (p){ const d = state.by[p.id]; note.hidden = false; note.textContent = `Shown on the site as: ${d.status}${d.contracts.length ? ` (from ${d.contracts.length} contract${d.contracts.length === 1 ? "" : "s"})` : " (no contracts yet)"}`; }
+    else note.hidden = true;
+    $("#dlg").showModal(); $("#f_name").focus();
+  }
+
+  function readPerson(){
+    const o = {};
+    P_TEXT.forEach(k => { o[k] = $("#f_" + k).value.trim(); });
+    P_LIST.forEach(k => { o[k] = splitList($("#f_" + k).value); });
+    return o;
+  }
+
+  async function savePerson(e){
+    e.preventDefault();
+    const o = readPerson();
+    if (!o.name){ showErr("#formErr", "Enter a name."); return; }
+    if (o.cvLink && !/^https?:\/\//i.test(o.cvLink)){ showErr("#formErr", "The CV link should start with https://"); return; }
+    const isNew = !state.editingPerson;
+    if (isNew && state.people.some(p => p.name.toLowerCase() === o.name.toLowerCase()) &&
+        !confirm(`${o.name} is already in the list. Add another entry with the same name?`)) return;
+    showErr("#formErr", ""); $("#saveBtn").disabled = true;
+    try {
+      if (!isNew){ o.id = state.editingPerson; o.v = state.editingPersonV; }
+      const data = await call("savePerson", { item: o });
+      if (isNew) state.open = data.id;
+      render(); toast(isNew ? "Contractor added" : "Changes saved"); $("#dlg").close();
+    } catch (err){ const msg = writeError(err, "save"); if (msg) showErr("#formErr", msg); }
+    finally { $("#saveBtn").disabled = false; }
+  }
+
+  async function deletePerson(id){
+    const p = state.people.find(x => x.id === id); if (!p) return;
+    const n = state.by[id].contracts.length;
+    if (!confirm(`Delete ${p.name}?${n ? ` This also deletes their ${n} contract${n === 1 ? "" : "s"}.` : ""} It removes the rows from the Google Sheet.`)) return;
+    try { await call("deletePerson", { id, v: p.v }); if (state.open === id) state.open = null; render(); toast("Contractor deleted"); }
+    catch (err){ const msg = writeError(err, "delete"); if (msg) toast(msg); }
+  }
+
+  // ---------- add / edit a contract ----------
+  let personLabels = {};   // label shown in the list -> person id
+
+  function openContract(opts){
+    const c = opts.contractId ? state.contracts.find(x => x.id === opts.contractId) : null;
+    const personId = c ? c.personId : opts.personId || null;
+    state.editingContract = c ? c.id : null; state.editingContractV = c ? c.v : "";
+    $("#cTitle").textContent = c ? "Edit contract" : "Add contract";
+    showErr("#cErr", "");
+    const dupes = {}; state.people.forEach(p => { dupes[p.name.toLowerCase()] = (dupes[p.name.toLowerCase()] || 0) + 1; });
+    personLabels = {};
+    state.people.forEach(p => {
+      const label = dupes[p.name.toLowerCase()] > 1 ? `${p.name} (${[p.location, p.country].filter(Boolean).join(", ") || "no location"})` : p.name;
+      personLabels[label] = p.id;
+    });
+    $("#peopleList").innerHTML = Object.keys(personLabels).sort((a, b) => a.localeCompare(b)).map(l => `<option value="${esc(l)}"></option>`).join("");
+    const input = $("#c_person");
+    const known = Object.keys(personLabels).find(l => personLabels[l] === personId);
+    input.value = known || ""; input.readOnly = !!personId;
+    $("#c_projects").value = c ? c.projects.join(", ") : "";
+    $("#c_start").value = c ? c.start : ""; $("#c_end").value = c ? c.end : "";
+    $("#c_payTerms").value = c ? c.payTerms : ""; $("#c_notes").value = c ? c.notes : "";
+    $("#cdlg").showModal(); (personId ? $("#c_projects") : input).focus();
+  }
+
+  async function saveContract(e){
+    e.preventDefault();
+    const personId = personLabels[$("#c_person").value.trim()];
+    if (!personId){ showErr("#cErr", "Choose a person from the list."); return; }
+    const o = { personId, projects: splitList($("#c_projects").value), start: $("#c_start").value, end: $("#c_end").value,
+      payTerms: $("#c_payTerms").value.trim(), notes: $("#c_notes").value.trim() };
+    if (o.start && o.end && o.start > o.end){ showErr("#cErr", "The start date is after the end date."); return; }
+    const isNew = !state.editingContract;
+    showErr("#cErr", ""); $("#cSaveBtn").disabled = true;
+    try {
+      if (!isNew){ o.id = state.editingContract; o.v = state.editingContractV; }
+      await call("saveContract", { item: o });
+      state.open = personId;
+      render(); toast(isNew ? "Contract added" : "Contract saved"); $("#cdlg").close();
+    } catch (err){ const msg = writeError(err, "save"); if (msg) showErr("#cErr", msg); }
+    finally { $("#cSaveBtn").disabled = false; }
+  }
+
+  async function deleteContract(id){
+    if (!confirm("Delete this contract? It removes the row from the Google Sheet.")) return;
+    const c = state.contracts.find(x => x.id === id);
+    try { await call("deleteContract", { id, v: c ? c.v : "" }); render(); toast("Contract deleted"); }
+    catch (err){ const msg = writeError(err, "delete"); if (msg) toast(msg); }
+  }
+
+  // ---------- wiring ----------
+  $("#chips").addEventListener("click", e => { const b = e.target.closest("[data-status]"); if (!b) return; state.filters.status = b.dataset.status; render(); });
+  [["#fRole","role"],["#fCountry","country"],["#fLanguage","language"],["#fProject","project"]].forEach(([sel, key]) => {
+    $(sel).onchange = e => { state.filters[key] = e.target.value; render(); };
+  });
+  $("#q").addEventListener("input", renderList);
+  $("#list").addEventListener("click", e => {
+    const t = e.target.closest("[data-toggle]");
+    if (t){ state.open = state.open === t.dataset.toggle ? null : t.dataset.toggle; renderList(); return; }
+    const a = e.target.closest("[data-act]"); if (!a) return;
+    const id = a.dataset.id;
+    ({ "edit-person": () => openPerson(id), "del-person": () => deletePerson(id),
+       "add-contract": () => openContract({ personId: id }), "edit-contract": () => openContract({ contractId: id }),
+       "del-contract": () => deleteContract(id) })[a.dataset.act]();
+  });
+  $("#addBtn").onclick = () => openPerson(null);
+  $("#addContractBtn").onclick = () => openContract({});
+  $("#cancelBtn").onclick = () => $("#dlg").close();
+  $("#cCancelBtn").onclick = () => $("#cdlg").close();
+  $("#form").addEventListener("submit", savePerson);
+  $("#cform").addEventListener("submit", saveContract);
+  wireChips("#f_roles", "#rolesQuick", () => lists().roles);
+  wireChips("#f_languages", "#langQuick", () => lists().languages);
+
+  $("#lockForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const pw = $("#pw").value; if (!pw) return;
+    $("#lockBtn").disabled = true; $("#lockErr").hidden = true;
+    await tryUnlock(pw, false);
+    $("#lockBtn").disabled = false;
+  });
+  $("#logoutBtn").onclick = () => showLock();
+  document.addEventListener("visibilitychange", refresh);
+  setInterval(refresh, 300000);   // every 5 minutes, and whenever you come back to the tab
+
+  const saved = store.get();
+  if (saved) tryUnlock(saved, true);
+})();
+</script>
+</body>
+</html>
