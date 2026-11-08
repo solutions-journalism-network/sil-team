@@ -279,7 +279,10 @@ function writable_(S) {
   return fields_(S).filter(function (f) { return S.hidden.indexOf(f) < 0 && S.managed.indexOf(f) < 0; });
 }
 function isBlank_(row) { return row.every(function (c) { return String(c).trim() === ""; }); }
-function ssTz_() { return SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone(); }
+/** The Sheet's time zone. A Sheet converted from Excel may not have one set, so fall back to the script's. */
+function ssTz_() {
+  return SpreadsheetApp.getActiveSpreadsheet().getSpreadsheetTimeZone() || Session.getScriptTimeZone() || "Etc/UTC";
+}
 function hash_(s) { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36); }
 
 function sheet_(S) {
@@ -346,8 +349,9 @@ function toItem_(rec, S, L, tz) {
     const j = L.col[f];
     let v;
     if (S.dates.indexOf(f) >= 0) {
-      const r = rec.raw[j];
-      v = r instanceof Date ? Utilities.formatDate(r, tz, "yyyy-MM-dd") : isoDate_(String(rec.shown[j]).trim());
+      const shown = String(rec.shown[j]).trim(), r = rec.raw[j];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(shown)) v = shown;     // already yyyy-mm-dd on screen: use it as is
+      else v = r instanceof Date ? Utilities.formatDate(r, tz, "yyyy-MM-dd") : isoDate_(shown);
     } else {
       v = String(rec.shown[j] == null ? "" : rec.shown[j]).trim();
     }
